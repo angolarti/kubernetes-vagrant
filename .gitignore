@@ -2,4 +2,4 @@
 .vagrant/rgloader
 DescomplicandoKubernetes
 ubuntu-xenial-16.04-cloudimg-console.log
-token-mv-token/.token_jion
+token-vm-k8s/.token_join

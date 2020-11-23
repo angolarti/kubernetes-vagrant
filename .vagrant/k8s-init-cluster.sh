@@ -6,8 +6,12 @@ echo "Download images of the components by cluster..."
 kubeadm config images pull
 
 echo "Initialize cluster..."
-mkdir $USER_HOME/token
-kubeadm init > $USER_HOME/token/.token_join
+if [ ! -d "$USER_HOME/token" ]
+then
+    mkdir $USER_HOME/token
+fi
+
+kubeadm init --apiserver-advertise-address=192.168.0.201 > $USER_HOME/token/.token_join
 
 echo "configure runtime container for root..."
 mkdir -p $HOME/.kube
@@ -30,27 +34,16 @@ kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl versio
 echo "List Nodes..."
 kubectl get nodes
 
-# Firewall Allow
-ufw allow from 192.168.99.0/24
-ufw allow from 192.168.0.0/24
+echo "Add bash completion for kubectl"
+kubectl completion bash > /etc/bash_completion.d/kubectl
 
-ufw allow from 192.168.99.0/24 to any port 6443
-ufw allow from 192.168.99.0/24 to any port 2379
-ufw allow from 192.168.99.0/24 to any port 2380
-ufw allow from 192.168.99.0/24 to any port 68
-
-
-ufw allow from 192.168.0.0/24 to any port 6443
-ufw allow from 192.168.0.0/24 to any port 2379
-ufw allow from 192.168.0.0/24 to any port 2380
-ufw allow from 192.168.0.0/24 to any port 68
-
-ufw enable
-ufw reload
+echo "Force kubectl bash completion active now"
+source <(kubectl completion bash)
 
 echo "Show join token"
 echo "========================================================================="
 JOIN_TOKEN=$(cat token/.token_join |grep -i "kubeadm join" && cat token/.token_join |grep -i "discovery-token-ca-cert-hash")
 echo $JOIN_TOKEN | tr -d '\\' > token/.token_join
+echo $JOIN_TOKEN | tr -d '\\'
 echo "========================================================================="
 

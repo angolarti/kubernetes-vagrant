@@ -150,10 +150,81 @@ Estes comando só devem ser executado no node master
 kubeadm config images pull
 kubeadm init
 ```
+## configure runtime container for normal user
+```bash
+mkdir -p $USER_HOME/.kube
+cp -i /etc/kubernetes/admin.conf $USER_HOME/.kube/config
+chown vagrant:vagrant $USER_HOME/.kube/config
+```
+### Instalar o Pod network para comunicação do cluster
+Este comando deve ser executado no node master
+```bash
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+```
+### Visualizar Nodes
+```bash
+kubectl get nodes
+```
+### Viasualizar Pods em execução
+```bash
+kubectl get pods --all-namespeces
+```
+### Activar o bash completion do kubectl
+```bash
+kubectl completion bash > /etc/bash_completion.d/kubectl
+```
+#### Forçar o uso do completion bash sem reiniciar o shell
+```bash
+source <(kubectl completion bash)
+```
+### Visualizar mais detalhes sobre os pods em execução
+```bash
+kubectl get pods --all-namespeces -o wide
+```
+### Monitorar a os container em execução
+```bash
+kubectl get pods --all-namespeces -w
+```
+### Motrar pods em um namespace não default
+```bash
+kubectl get pods -n kube-system
+```
 ### Join node in cluster
-Este comando só deve ser rodados em nodes worker
+Este comando só deve ser rodados em nodes worker, ao adicionar um node no cluster deve demorar entorno de 1m caso não aconteça este intervalo de tempo faz o restart do kubelet
 ```bash
 # Lembrar que este comando é gerado de forma automática pelo camando kubeadm init
 # Deve ser copiado e executado no terminal dos nodes worker
 sudo kubeadm join <hosts>:<port> --token 4ipu0m.5q0or83aao7j2aru --discovery-token-ca-cert-hash sha256:739d75755ed9dba30415af83e64774aad1e701cf9d0dd3393dd05908af6068c9
+```
+#### Visualizar Nodes
+```bash
+kubectl get nodes
+```
+### Visualizar detalhes de um Node
+```bash
+kubectl descrive nodes <node-name>
+```
+### Visualizar detalhes de um Pod
+```bash
+kubectl descrive pods -n kube-system <pod-name>
+```
+### Recuperar o token de ingresso ao cluster
+```bash
+kubeadm token create --print-join-command
+```
+#### Visualizar os namespaces
+```bash
+kubectl get namespaces
+```
+#### Criar um namespaces
+```bash
+kubectl create namespace <namespace-name>
+```
+### Criar um Pod versão > 15.*
+```bash
+kubectl run nginx --image=nginx
+```
+#### Visualizar o manifesto da criação de um Pod 
+```bash
+kubectl get pods <pod-name> -o yaml
 ```
