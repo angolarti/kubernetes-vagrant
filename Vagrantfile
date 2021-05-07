@@ -32,14 +32,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       preserve_order: true,
       path: "k8s-tools.sh"
 
+    control.vm.synced_folder "cluster/", "/home/vagrant/cluster", 
+      SharedFoldersEnableSymlinksCreate: false
+    control.vm.synced_folder "containerd/", "/home/vagrant/containerd", 
+      SharedFoldersEnableSymlinksCreate: false
+
     control.vm.provision "k8s-cluster-on-primises",
       type: "shell",
       preserve_order: true,
       path: "k8s-cluster-on-primeses.sh"
-      control.vm.synced_folder "cluster/", "/home/vagrant/cluster", 
-      SharedFoldersEnableSymlinksCreate: false
-      control.vm.synced_folder "containerd/", "/home/vagrant/containerd", 
-      SharedFoldersEnableSymlinksCreate: false
   end
 
   (1..2).each do |i|
@@ -55,12 +56,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         use_dhcp_assigned_default_route: true,  bridge: [
           INET_WIFI ], ip: "192.168.1.2#{i}"
 
+      node.vm.synced_folder "containerd/", "/home/vagrant/containerd", 
+            SharedFoldersEnableSymlinksCreate: false
       node.vm.provision "k8s-containerd-runtime",
         type: "shell",
         preserve_order: true,
         path: "k8s-containerd-runtime.sh"
-        node.vm.synced_folder "containerd/", "/home/vagrant/containerd", 
-        SharedFoldersEnableSymlinksCreate: false
       
       node.vm.provision "k8s-tools",
         type: "shell",
@@ -68,13 +69,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         path: "k8s-tools.sh"
       
       node.vm.provision "file",
-        source: "token_cluster/",
+        source: "cluster/",
         destination: "/home/vagrant/cluster/"
 
       node.vm.provision "node-join-in-cluster",
         type: "shell",
         preserve_order: true,
-        inline: "echo $CLUSTER_TOKEN_JOIN | bash"
+        inline: "cat /home/vagrant/cluster/token | bash"
     end
   end
 end
