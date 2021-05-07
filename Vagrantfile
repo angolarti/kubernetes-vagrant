@@ -35,7 +35,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     control.vm.provision "k8s-cluster-on-primises",
       type: "shell",
       preserve_order: true,
-      path: "k8s-cluster-on-primises.sh"
+      path: "k8s-cluster-on-primeses.sh"
       control.vm.synced_folder "cluster/", "/home/vagrant/cluster", 
       SharedFoldersEnableSymlinksCreate: false
   end

@@ -39,7 +39,7 @@ sudo containerd config default | sudo tee /etc/containerd/config.toml
 #    SystemdCgroup = true
 
 echo "\nUsing the systemd cgroup driver"
-cat ./containerd/config.toml >/etc/containerd/config.toml
+cat /vagrant/containerd/config.toml >/etc/containerd/config.toml
 
 echo "\nRestart containerd"
 sudo systemctl restart containerd
