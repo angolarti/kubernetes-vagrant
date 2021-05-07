@@ -38,6 +38,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       path: "k8s-cluster-on-primeses.sh"
       control.vm.synced_folder "cluster/", "/home/vagrant/cluster", 
       SharedFoldersEnableSymlinksCreate: false
+      control.vm.synced_folder "containerd/", "/home/vagrant/containerd", 
+      SharedFoldersEnableSymlinksCreate: false
   end
 
   (1..2).each do |i|
