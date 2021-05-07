@@ -1,4 +1,4 @@
-#!bin/bash -e
+#!/bin/bash -e
 
 # Install and configure containerd as a Kubernetes Container Runtime
 
