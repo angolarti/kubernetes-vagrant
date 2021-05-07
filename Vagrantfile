@@ -70,7 +70,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       
       node.vm.provision "file",
         source: "cluster/",
-        destination: "/home/vagrant/cluster/"
+        destination: "/home/vagrant/"
 
       node.vm.provision "node-join-in-cluster",
         type: "shell",
