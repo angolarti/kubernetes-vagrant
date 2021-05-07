@@ -59,6 +59,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         type: "shell",
         preserve_order: true,
         path: "k8s-containerd-runtime.sh"
+        node.vm.synced_folder "containerd/", "/home/vagrant/containerd", 
+        SharedFoldersEnableSymlinksCreate: false
       
       node.vm.provision "k8s-tools",
         type: "shell",
