@@ -22,16 +22,21 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       use_dhcp_assigned_default_route: true,  bridge: [
         INET_WIFI ], ip: "192.168.1.20"
     
-    control.vm.provision "install-and-config-k8s-nodes",
+    control.vm.provision "k8s-containerd-runtime",
       type: "shell",
       preserve_order: true,
-      path: "nodes.sh"
+      path: "k8s-containerd-runtime.sh"
     
-    control.vm.provision "init-cluster-k8s",
+    control.vm.provision "k8s-tools",
       type: "shell",
       preserve_order: true,
-      path: "control.sh"
-      control.vm.synced_folder "token_cluster", "/home/vagrant/token", 
+      path: "k8s-tools.sh"
+
+    control.vm.provision "k8s-cluster-on-primises",
+      type: "shell",
+      preserve_order: true,
+      path: "k8s-cluster-on-primises.sh"
+      control.vm.synced_folder "cluster/", "/home/vagrant/cluster", 
       SharedFoldersEnableSymlinksCreate: false
   end
 
@@ -48,24 +53,24 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         use_dhcp_assigned_default_route: true,  bridge: [
           INET_WIFI ], ip: "192.168.1.2#{i}"
 
-      node.vm.provision "install-and-config-k8s-nodes",
+      node.vm.provision "k8s-containerd-runtime",
         type: "shell",
         preserve_order: true,
-        path: "nodes.sh"
+        path: "k8s-containerd-runtime.sh"
       
-      node.vm.provision "enable br_netfilter kernel module",
+      node.vm.provision "k8s-tools",
         type: "shell",
         preserve_order: true,
-        inline: "modprobe br_netfilter"
+        path: "k8s-tools.sh"
       
       node.vm.provision "file",
-        source: "token_cluster/join",
-        destination: "/home/vagrant/token"
+        source: "token_cluster/",
+        destination: "/home/vagrant/cluster/"
 
       node.vm.provision "node-join-in-cluster",
         type: "shell",
         preserve_order: true,
-        inline: "cat /home/vagrant/token | bash"
+        inline: "echo $CLUSTER_TOKEN_JOIN | bash"
     end
   end
 end

@@ -1,2 +1,3 @@
-token_cluster/join
+cluster/
+old/
 .vagrant/
